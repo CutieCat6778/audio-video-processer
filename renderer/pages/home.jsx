@@ -26,6 +26,10 @@ function Home() {
     ipcRenderer.send('shuffle')
   }
 
+  const onFfmpegSet = () => {
+    ipcRenderer.send('ffmpegSet')
+  }
+
   const onRenderAudio = () => {
     onClickCheckConnection();
     setMessage(message + " \n Đang chạy, chờ chút đi.")
@@ -80,6 +84,9 @@ function Home() {
             filePath ? filePath.map(a => `${a} \n`) : "Chọn đã..."
           }
         </span>
+        <br/>
+        <br/>
+        <input type='file' id="inputFile" multiple/>
         <h1>Nơi file được export</h1>
         <span>
         {
@@ -88,10 +95,9 @@ function Home() {
         </span>
         <br/>
         <br/>
-        <br/>
-        <input type='file' id="inputFile" multiple/>
         <button onClick={onExportFileUpdate}>Choose export path</button>
-        <br/>
+        <h1>Chọn file ffmpeg</h1>
+        <button onClick={onFfmpegSet}>Ffmpeg file</button>
         <br/>
         <br/>
         <h1>Output</h1>

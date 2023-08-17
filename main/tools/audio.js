@@ -3,13 +3,13 @@ import { readFileSync, writeFileSync } from "fs";
 import chokidar from "chokidar"
 import { app } from "electron";
 
-export async function AppendAudio(targetPath, filesPath) {
+export async function AppendAudio(targetPath, filesPath, ffmpegPath) {
   const inputs = `${filesPath.map(a => `file ${a}`).join("\n")}`;
   const path = app.getPath("temp");
 
   await writeFileSync(path + '/list.txt', inputs, { encoding: "utf8" })
 
-  let command_string = `ffmpeg -f concat -safe 0 -i ${path}/list.txt -c copy ${targetPath} -y 2> ${path}/log.txt`;
+  let command_string = `${ffmpegPath} -f concat -safe 0 -i ${path}/list.txt -c copy ${targetPath} -y 2> ${path}/log.txt`;
   console.log(command_string);
   exec(command_string)
 }

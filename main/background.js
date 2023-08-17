@@ -42,7 +42,7 @@ app.on("window-all-closed", () => {
 ipcMain.on("connection", (event, arg) => {
   console.log("Recieved connection ", arg);
   event.sender.send("logUpdate", "Create log");
-  event.sender.send("status-check", `[${new Date() - arg}ms] Status OK`);
+  event.sender.send("status-check", `[${new Date() - arg}ms] Please wait...`);
 
   CreateLogFile();
 
@@ -100,6 +100,13 @@ ipcMain.on("exportFileUpdate", async (event, arg) => {
 
 ipcMain.on('renderAudio', (event, arg) => {
   console.log("Called to render audio")
-  AppendAudio(config.export, config.inputs);
+  AppendAudio(config.export, config.inputs, config.ffmpeg);
   shell.showItemInFolder(config.export);
+})
+
+ipcMain.on('ffmpegSet', async (event, data) => {
+  const res = await dialog.showOpenDialogSync({
+    properties: ['openFile']
+  });
+  config.ffmpeg = res[0];
 })
