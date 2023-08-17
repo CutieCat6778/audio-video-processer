@@ -33,6 +33,8 @@ if (isProd) {
   }
 })();
 
+const appPath = app.getPath("temp");
+
 app.on("window-all-closed", () => {
   app.quit();
 });
@@ -52,7 +54,7 @@ ipcMain.on("connection", (event, arg) => {
     }
   }
 
-  ListenToLogFile("log.txt", sendIPC);
+  ListenToLogFile(appPath+"/log.txt", sendIPC);
 });
 function shuffle(array) {
   let currentIndex = array.length,  randomIndex;
