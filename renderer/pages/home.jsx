@@ -8,6 +8,7 @@ function Home() {
   const [message, setMessage] = React.useState('No ipc message');
   const [logMessage, setLogMessage] = React.useState('');
   const [filePath, setFilePath] = React.useState();
+  const [exportPath, setExportPath] = React.useState();
 
   const onClickCheckConnection = () => {
     ipcRenderer.send('connection', new Date());
@@ -21,8 +22,13 @@ function Home() {
     ipcRenderer.send('exportFileUpdate');
   }
 
+  const onShuffle = () => {
+    ipcRenderer.send('shuffle')
+  }
+
   const onRenderAudio = () => {
     onClickCheckConnection();
+    setMessage(message + " \n Đang chạy, chờ chút đi.")
     ipcRenderer.send('renderAudio')
   }
 
@@ -34,6 +40,14 @@ function Home() {
     ipcRenderer.on('status-check', (event, data) => {
       setMessage(data);
     });
+
+    ipcRenderer.on('updateFiles', (event, data) => {
+      setFilePath(data);
+    })
+
+    ipcRenderer.on('updateExportPath', (event, data) => {
+      setExportPath(data);
+    })
 
     ipcRenderer.on('logUpdate', (event, data) => {
       console.log("Log Update", data);
@@ -60,23 +74,39 @@ function Home() {
         <title>Audio-Video-Prossesor</title>
       </Head>
       <div>
-        <p>
-          {message}
-          <br/>
-          <br/>
+        <h1>File sẽ được copy</h1>
+        <span style={{ whiteSpace: "pre-line"}}>
           {
-            filePath ? filePath.map(a => `${a} \n`) : null
+            filePath ? filePath.map(a => `${a} \n`) : "Chọn đã..."
           }
-        </p>
+        </span>
+        <h1>Nơi file được export</h1>
+        <span>
+        {
+            exportPath ? exportPath : "Chọn đã..."
+          }
+        </span>
+        <br/>
+        <br/>
+        <br/>
         <input type='file' id="inputFile" multiple/>
         <button onClick={onExportFileUpdate}>Choose export path</button>
+        <br/>
+        <br/>
+        <br/>
+        <h1>Output</h1>
+        <h3>{message}</h3>
         <div style={{ backgroundColor: "#000000" }}>
           <span style={{ whiteSpace: "pre-line", backgroundColor: "#000000", color: "#ffffff"}}>
             {logMessage}
           </span>
         </div>
-        
+        <br/>
+        <br/>
+        <br/>
+        <button onClick={onShuffle}>Lắc cái mông :)</button>
         <button onClick={onRenderAudio}>Render audio</button>
+
       </div>
     </React.Fragment>
   );

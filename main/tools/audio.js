@@ -3,9 +3,11 @@ import { readFileSync, writeFileSync } from "fs";
 import chokidar from "chokidar"
 
 export async function AppendAudio(targetPath, filesPath) {
-  const inputs = `${filesPath.map(a => `-i ${a}`).join(" ")}`;
+  const inputs = `${filesPath.map(a => `file ${a}`).join("\n")}`;
 
-  let command_string = `ffmpeg ${inputs} -filter_complex "[0:a][1:a]concat=n=${filesPath.length}:v=0:a=1" ${targetPath} -y 2> log.txt`;
+  await writeFileSync('list.txt', inputs, { encoding: "utf8" })
+
+  let command_string = `ffmpeg -f concat -safe 0 -i list.txt -c copy ${targetPath} -y 2> log.txt`;
   exec(command_string);
 }
 

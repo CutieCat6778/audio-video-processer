@@ -54,11 +54,31 @@ ipcMain.on("connection", (event, arg) => {
 
   ListenToLogFile("log.txt", sendIPC);
 });
+function shuffle(array) {
+  let currentIndex = array.length,  randomIndex;
+
+  // While there remain elements to shuffle.
+  while (currentIndex != 0) {
+
+    // Pick a remaining element.
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex], array[currentIndex]];
+  }
+
+  return array;
+}
+
+ipcMain.on("shuffle", (event, arg) => {
+  config.inputs = shuffle(config.inputs);
+  event.sender.send('updateFiles', config.inputs)
+})
 
 ipcMain.on("fileUpload", (event, arg) => {
-  console.log("Recieved file upload", arg);
   config.inputs = arg;
-  console.log(config);
 });
 
 ipcMain.on("exportFileUpdate", async (event, arg) => {
@@ -67,8 +87,13 @@ ipcMain.on("exportFileUpdate", async (event, arg) => {
     name: "Audio",
     extensions: "mp3"
   }] })
-  config.export = res + ".mp3";
+  if(!res.endsWith(".mp3")) {
+    config.export = res + ".mp3";
+  } else {
+    config.export = res;
+  }
   console.log(config);
+  event.sender.send('updateExportPath', config.export)
 })
 
 ipcMain.on('renderAudio', (event, arg) => {
