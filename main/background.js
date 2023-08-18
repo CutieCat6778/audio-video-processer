@@ -44,6 +44,11 @@ ipcMain.on("connection", (event, arg) => {
   event.sender.send("logUpdate", "Create log");
   event.sender.send("status-check", `[${new Date() - arg}ms] Please wait...`);
 
+  let slash = "/"
+  const osVer = platform();
+  console.log(osVer)
+  if(osVer == "win32") slash = "\\";
+
   CreateLogFile();
 
   function sendIPC(log) {
@@ -54,7 +59,7 @@ ipcMain.on("connection", (event, arg) => {
     }
   }
 
-  ListenToLogFile(appPath+"/log.txt", sendIPC);
+  ListenToLogFile(appPath+slash+"log.txt", sendIPC);
 });
 function shuffle(array) {
   let currentIndex = array.length,  randomIndex;
