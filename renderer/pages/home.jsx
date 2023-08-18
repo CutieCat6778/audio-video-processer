@@ -61,7 +61,7 @@ function Home() {
     })
 
     document.getElementById('inputFile').addEventListener('change', (event) => {
-      const files = Array.from(event.target.files).map(f => f.path);
+      const files = Array.from(event.target.files).map(f => f.path.replace(" ", "\\ "));
       console.log(files);
       setFilePath(files);
       onFileUpload(files);

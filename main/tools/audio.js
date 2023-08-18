@@ -2,14 +2,19 @@ import { exec } from "child_process";
 import { readFileSync, writeFileSync } from "fs";
 import chokidar from "chokidar"
 import { app } from "electron";
+import { platform } from "os";
 
 export async function AppendAudio(targetPath, filesPath, ffmpegPath) {
   const inputs = `${filesPath.map(a => `file ${a}`).join("\n")}`;
   const path = app.getPath("temp");
+  let slash = "/"
+  const osVer = platform();
+  console.log(osVer)
+  if(osVer == "win32") slash = "\\";
 
-  await writeFileSync(path + '/list.txt', inputs, { encoding: "utf8" })
+  await writeFileSync(path + `${slash}list.txt`, inputs, { encoding: "utf8" })
 
-  let command_string = `${ffmpegPath} -f concat -safe 0 -i ${path}/list.txt -c copy ${targetPath} -y 2> ${path}/log.txt`;
+  let command_string = `${ffmpegPath} -f concat -safe 0 -i ${path}${slash}list.txt -c copy ${targetPath} -y 2> ${path}${slash}log.txt`;
   console.log(command_string);
   exec(command_string)
 }
